@@ -1,39 +1,43 @@
 "use strict"
 
-//<a href="#img1" class="gallery-items">
-//    <img src="./img/img1.jpg" alt="">
-//</a>
+const clearElement = (htmlElement) => {
+    while (htmlElement.firstChild) {
+        htmlElement.removeChild(htmlElement.lastChild)
+    }
+}
+const searchImages = async (event) => {
+    if (event.key === 'Enter') {
+        const url = `https://ghibliapi.herokuapp.com/films`
+        const imageMessage = await fetch(url)
+        const images = await imageMessage.json()
+        console.log(images)
 
-const images = [
-    "./img/img1.jpg",
-    "./img/img2.jpg",
-    "./img/img3.jpg",
-    "./img/img4.jpg",
-    "./img/img5.jpg",
-    "./img/img6.jpg",
-    "./img/img7.jpg",
-    "./img/img8.jpg",
-    "https://riclan.com.br/wp-content/uploads/2019/10/pasted-image-0-1.png"
-]
+        // clearElement(document.querySelector('.gallery-section'))
+        // clearElement(document.querySelector('.slide-section'))
+
+        renderGallery(images.image)
+        renderSlide(images.image)
+    }
+}
+
+
+
 
 const filterUrl = urlImage => {
     const lastBar = urlImage.lastIndexOf('/') + 1
     const lastDot = urlImage.lastIndexOf('.') 
     return urlImage.substring(lastBar, lastDot)
 }
-
 const createGalleryItem = (urlImage) => {
-    const htmlGalleryConteiner = document.querySelector(".gallery-section")
-
+    const htmlGallerycontainer = document.querySelector(".gallery-section")
     const link = document.createElement('a')
     link.href = `#${filterUrl(urlImage)}`
     link.classList.add("gallery-items")
     link.innerHTML = `<img src="${urlImage}" alt="">`
-    htmlGalleryConteiner.append(link)
+    htmlGallerycontainer.append(link)
 }
-
 const createSlideItem = (urlImage, index, array) => {
-    const conteiner = document.querySelector(".slide-section")
+    const container = document.querySelector(".slide-section")
     const div = document.createElement('div')
     div.classList.add('slide')
     div.id = filterUrl(urlImage)
@@ -45,20 +49,18 @@ const createSlideItem = (urlImage, index, array) => {
     const slideNext = filterUrl(array[indexNext])
 
     div.innerHTML = `
-            <div class="image-conteiner">
+            <div class="image-container">
                 <a href="" class="close">&#10006;</a>
                 <a href="#${slideBack}" class="navigation back">&#171;</a>
                 <img src="${urlImage}" alt="">
                 <a href="#${slideNext}" class="navigation next">&#187;</a>
             </div>
     `
-    conteiner.appendChild(div)
+    container.appendChild(div)
 }
 
 const renderGallery = (images) => images.forEach(createGalleryItem)
 const renderSlide = (images) => images.forEach(createSlideItem)
 
 
-renderGallery(images)
-renderSlide(images)
-
+document.querySelector('.search-container input').addEventListener('keypress', searchImages)
