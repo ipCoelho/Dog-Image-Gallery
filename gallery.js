@@ -6,17 +6,24 @@ const clearElement = (htmlElement) => {
     }
 }
 const searchImages = async (event) => {
+    // Get the event from the 'keypress' that delivers an object.
     if (event.key === 'Enter') {
-        const url = `https://ghibliapi.herokuapp.com/films`
-        const imageMessage = await fetch(url)
-        const images = await imageMessage.json()
-        console.log(images)
+        // Get the value of the input, by the keypress, using the properties 'event.target.value'.
+        const breed = event.target.value;
+        // Getting the API url and saving into a const.
+        const apiUrl = `https://dog.ceo/api/breed/${breed}/images`;
+        // Using the method fetch(), and saving the object, into a const; also using the property 'await' to deliver the promisse properly.
+        const apiFetch = await fetch(apiUrl);
+        // Using the method .json() to transform the object into a json, and also saving into a const.
+        const apiJson = await apiFetch.json();
+        console.log(apiJson);
 
-        // clearElement(document.querySelector('.gallery-section'))
-        // clearElement(document.querySelector('.slide-section'))
+        clearElement(document.querySelector('.gallery-section'))
+        clearElement(document.querySelector('.slide-section'))
 
-        renderGallery(images.image)
-        renderSlide(images.image)
+        // Using the both method created to render the gallery and also the slides, the '.message' is 'key' on the json which contain the array with all the image URLs.
+        renderGallery(apiJson.message);
+        renderSlide(apiJson.message);
     }
 }
 
